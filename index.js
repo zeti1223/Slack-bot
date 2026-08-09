@@ -101,6 +101,22 @@ app.command("/turtle-pet", async ({ ack, respond }) => {
   await respond({ text: result.message });
 });
 
+// /turtle-sleep
+app.command("/turtle-sleep", async ({ ack, respond }) => {
+  await ack();
+  
+  const result = turtleInstance.setSleep();
+  await respond({ text: result.message });
+});
+
+// /turtle-wake
+app.command("/turtle-wake", async ({ ack, respond }) => {
+  await ack();
+  
+  const result = turtleInstance.setWake();
+  await respond({ text: result.message });
+});
+
 // /turtle-race @colleague
 app.command("/turtle-race", async ({ command, ack, respond, client }) => {
   await ack();
@@ -121,9 +137,9 @@ app.command("/turtle-race", async ({ command, ack, respond, client }) => {
 
   await respond({ text: `turtle challenged: ${opponent}!\n${result.message}` });
 
-  // Send progressive updates for 5 minutes
+  // Send progressive updates every 10 seconds
   let updateCount = 0;
-  const maxUpdates = 5;
+  const maxUpdates = 30; // 5 minutes of updates at 10-second intervals
   const interval = setInterval(async () => {
     const update = turtleInstance.getRaceUpdate();
     
@@ -137,7 +153,15 @@ app.command("/turtle-race", async ({ command, ack, respond, client }) => {
         clearInterval(interval);
       }
     } catch (error) {
-      console.error("Error sending race update:", error);
+      if (error.data && error.data.error === 'not_in_channel') {
+        console.error("Bot is not in the channel. Please add the bot to the channel to receive race updates.");
+        await client.chat.postMessage({
+          channel: command.user_id,
+          text: "⚠️ Error: The bot needs to be added to the channel to send race updates. Please invite the bot to the channel first."
+        });
+      } else {
+        console.error("Error sending race update:", error);
+      }
       clearInterval(interval);
     }
 
@@ -145,7 +169,7 @@ app.command("/turtle-race", async ({ command, ack, respond, client }) => {
     if (updateCount >= maxUpdates) {
       clearInterval(interval);
     }
-  }, 60000); // Update every minute
+  }, 10000); // Update every 10 seconds
 });
 
 // /turtle-help
@@ -159,6 +183,8 @@ app.command("/turtle-help", async ({ ack, respond }) => {
 /turtle-status - View turtle's status
 /turtle-pet - Petting (increases happiness!)
 /turtle-race @colleague - Super-slow turtle race
+/turtle-sleep - Force turtle to sleep (for testing)
+/turtle-wake - Wake turtle up (for testing)
 
 *Tip:* After 18:00 turtle sleeps, and only responds to commands with: Zzz...`
   });

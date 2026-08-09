@@ -8,6 +8,8 @@ class turtle {
     this.lastPetReset = Date.now();
     this.isRacing = false;
     this.raceProgress = 0;
+    this.manualSleepOverride = false; // For testing sleep mode
+    this.manualWakeOverride = false; // For testing wake mode
   }
 
   // Healthy foods
@@ -127,8 +129,32 @@ class turtle {
   }
 
   isSleepTime() {
+    if (this.manualWakeOverride) {
+      return false; // Override sleep time, turtle is awake
+    }
+    if (this.manualSleepOverride) {
+      return true; // Override wake time, turtle is sleeping
+    }
     const hour = new Date().getHours();
     return hour >= 18 || hour < 9;
+  }
+
+  setSleep() {
+    this.manualSleepOverride = true;
+    this.manualWakeOverride = false;
+    return {
+      success: true,
+      message: "turtle is now sleeping (manual override for testing). Zzz..."
+    };
+  }
+
+  setWake() {
+    this.manualWakeOverride = true;
+    this.manualSleepOverride = false;
+    return {
+      success: true,
+      message: "turtle is now awake (manual override for testing). Ready to play!"
+    };
   }
 
   startRace() {

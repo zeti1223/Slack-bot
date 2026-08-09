@@ -30,6 +30,14 @@ Interaction and petting. Increases his happiness, but if you call it more than 5
 
 You can challenge a colleague to a super-slow turtle race. The bot sends updates for 5 minutes about the "dizzying" 2 cm/hour speed.
 
+### `/turtle-sleep`
+
+Force turtle to sleep (for testing purposes). This overrides the normal sleep schedule.
+
+### `/turtle-wake`
+
+Wake turtle up (for testing purposes). This overrides the normal sleep schedule.
+
 ### `/turtle-help`
 
 Shows all available commands.
@@ -77,6 +85,8 @@ You need to create an application in the Slack Workspace with the following comm
 - `/turtle-status`
 - `/turtle-pet`
 - `/turtle-race [@colleague]`
+- `/turtle-sleep`
+- `/turtle-wake`
 - `/turtle-help`
 
 Enable Socket Mode and copy the tokens to the `.env` file.
